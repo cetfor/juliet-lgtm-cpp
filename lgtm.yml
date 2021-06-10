@@ -1,0 +1,12 @@
+path_classifiers:
+  test:
+    # Override LGTM's default classification of test files by excluding all files.
+    - exclude: /
+extraction:
+  cpp:
+    configure:
+      command:
+        - python3 create_per_cwe_files.py
+    index:
+      build_command:
+        - make individuals
