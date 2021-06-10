@@ -36,9 +36,52 @@ It's that easy.  Note, that not all test cases are applicable to all platforms. 
 
 In other words, only s01-s04 are Linux-based, the rest are specific to Windows.  We can add Windows builds later as LGTM does support building for Windows, but I'm not worried about this right now.
 
-# How do you compile Juliet for LGTM
+# How do you compile Juliet for LGTM?
 
 By creating a custom `lgtm.yml` file and including it in this repo.  The two documents you'll want to check out are:
 * [lgtm.yml configuration file](https://lgtm.com/help/lgtm/lgtm.yml-configuration-file)
 * [cpp extraction](https://lgtm.com/help/lgtm/cpp-extraction)
 
+This turned out to be quite a bit easier than I expected. Here's our current `lgtm.yml` file:
+
+```
+path_classifiers:
+  test:
+    # Override LGTM's default classification of test files by excluding all files.
+    - exclude: /
+extraction:
+  cpp:
+    configure:
+      command:
+        - python3 create_per_cwe_files.py
+    index:
+      build_command:
+        - make individuals
+```
+
+I recommend reading the doc links above, there are two main components at play here, `path_classifiers` and `extraction`.
+
+## Path Classifiers
+
+LGTM tries to guess what code should be omitted from analysis based on probable association to the main purpose of the code.  For example, test code is omitted by default since test code isn't deployed code.  So LGTM will ignore it.  However, LGTM sees our Juliet test cases as "tests" and omits them from analysis!  We do not want this at all - so in the `path_classifiers`, `test` block we exclude everything (including LGTM's default categories) from being flaged as a test file.  Now, everything will be included in analysis.
+
+## Extraction
+
+Extraction is one of th emost important parts of an `lgtm.yml` file as it describes how to build your code. Since we're building C and C++ code we utilize the `cpp` block which contains many possible steps - but we just use two, `configure` and `index`.  To make a long story short, these are executed in a sequence where we can garuntee our `configure` command is fired before our `build_command`.  There's a lot of flexibility in this process, so there are probably a few way to write these confg files and make them work, this is just one example.
+
+All this says is "run python3 command first, annd once that's done, run the make command".  It's that simple.
+
+# Can I use this repo?
+
+Yes! Remember, this is a partial Juliet set, so if you want to see a new CWE tests added, just open an issue ticket and let me know what you want and I'll add it. If you want to see the default CodeQL query alerts you can check them out on LGTM [here](https://lgtm.com/projects/g/cetfor/juliet-lgtm-cpp/).
+
+If you want the CodeQL database so you can perform CodeQL queries on this code base, you can grab it [here](https://lgtm.com/projects/g/cetfor/juliet-lgtm-cpp/ci/). Just scroll to the bottom under the section called "CodeQL databases for local analysis" and download the C/C++ database.
+
+# How do I use the CodeQL database?
+
+There are three ways to do this:
+1. Directly on LGTM.com
+2. Via the CodeQL CLI
+3. Via the Visual Studio Code integration
+
+See the [CodeQL documentation](https://codeql.github.com/docs/) for more information.  For an excellent overview of using CodeQL for Visual Studio, check out [Finding security vulnerabilities in JavaScript with CodeQL - GitHub Satellite 2020](https://www.youtube.com/watch?v=pYzfGaLTqC0). This was a workshop hosted by Aditya Sharad. In the workshop they query a JavaScript codebase in Visual Studio.  It'll help you get the required knowledge to do the same process with the Juliet database.
