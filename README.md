@@ -1,3 +1,7 @@
+# tl;dr
+
+This repo enabled LGTM (online CodeQL) patform to analyze the Juliet test set.  You can see the [results on LGTM.com](https://lgtm.com/projects/g/cetfor/juliet-lgtm-cpp/?mode=list). You can also [download the C/C++ CodeQL database](https://lgtm.com/projects/g/cetfor/juliet-lgtm-cpp/ci/) for this repo and query it locally. 
+
 # What is this repo?
 
 This repo contains a partial fork of the Juliet Test Suite for C/C++ v1.3 by NSA Center for Assured Software with a CodeQL/LGTM configuration file to enable CodeQL analysis. You can (and should) acquire the full source code which is a part of the NIST Software Assurance Reference Dataset (SARD) here: https://samate.nist.gov/SRD/testsuite.php
